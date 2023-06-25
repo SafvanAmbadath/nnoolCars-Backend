@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const joi=require("joi")
 
+
 function validate(data){
     const schema=joi.object({
         email:joi.string().email().required().label("Email"),

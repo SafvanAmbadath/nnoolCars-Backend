@@ -42,7 +42,7 @@ router.post("/adminlogin",async (req,res)=>{
 
 router.get("/getUserDetails",  async(req,res)=>{
   try {
-    console.log("for users list");
+    console.log("for getting userslist");
     const users = await userDb.find();
 
     if (users) return res.status(201).json({ users });
