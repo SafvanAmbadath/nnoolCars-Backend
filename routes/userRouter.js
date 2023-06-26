@@ -4,6 +4,7 @@ const tokenDb = require("../models/tokenSchema");
 const sendEmail = require("../utils/sendEmail");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const jwt=require("jsonwebtoken")
 
 router.post("/", async (req, res) => {
     try{
@@ -58,6 +59,39 @@ router.get("/:id/verify/:token", async(req,res)=>{
 }catch(error){
     res.status(500).send({message:"Internal server error"})
 }
+})
+
+router.post("/googleAuthentication",async(req,res)=>{
+    try {
+        console.log("google login");
+        const user = await userDb.findOne({ email: req.body.data.email });
+        console.log(user);
+    
+        if (user) {
+          const name = user.firstName;
+          const email = user.email;
+          const id = user._id;
+    
+          const number = user.phoneNumber;
+          const token = jwt.sign({ id: id }, process.env.JWT_SECRET, {
+            expiresIn: 86400,
+          });
+          console.log("before response");
+          res
+            .status(200)
+            .json({
+              auth: true,
+              name,
+              email,
+              id,
+              number,
+              message: "Login success",
+              token,
+            });
+        } else {
+          res.status(501).json({});
+        }
+      } catch {}
 })
 
 module.exports=router;
