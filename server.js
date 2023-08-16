@@ -11,6 +11,8 @@ const userDb = require("./models/userSchema");
 const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
 const bcrypt = require("bcrypt");
+const socketIo = require('socket.io');
+
 
 //database connection
 db.dbconnection();
@@ -28,65 +30,36 @@ app.use(
 app.use(morgan("tiny"));
 
 //routes
-app.use("/api/users",userRoutes);
-app.use("/api/auth",authRoutes)
-app.use("/api/admin",adminRoutes)
+app.use("/users",userRoutes);
+app.use("/auth",authRoutes)
+app.use("/admin",adminRoutes)
 
-// app.post('/signup', async(req, res) => {
-//   // console.log('lllllll');
-//   console.log(req.body);
-//   const user = await userDb.findOne({email:req.body.email})
 
-//   if(user){
-//     res.status(501).json({msg:''})
-//   }else{
-//     const password=bcrypt.hashSync(req.body.password,10)
-
-//     Object.assign(req.body,{password})
-//     const data = await userDb.create(req.body)
-
-//     const token = jwt.sign({id:data._id},process.env.JWT_SECRET,{expiresIn:86400})
-//     // console.log(data.name);
-//     const name = data.firstName
-//     const number = data.phoneNumber
-
-//     res.status(201).json({auth:true,name,token,number})
-
-//   }
-
-// });
-
-// app.post('/login',async(req,res)=>{
-//     console.log(req.body);
-//     const user = await userDb.findOne({email:req.body.email})
-//     if(user){
-//         const password = await bcrypt.compare(req.body.password, user.password)
-//         console.log(password);
-
-//         if(password){
-//             const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:86400})
-//             // console.log(data.name);
-//             const name = user.firstName
-//             const number = user.phoneNumber
-
-//             res.status(201).json({auth:true,name,token,number})
-//         }else{
-//             console.log('kkkkk');
-//             res.status(200).json({msg:'incorrect password'})
-//           }
-
-//         }else{
-//           res.status(200).json({msg:'incorrect email'})
-
-//         }
-//       })
 
 const port = process.env.PORT || 8080;
 
-app.listen(port, (err) => {
+const server=app.listen(port, (err) => {
     if (err) {
         console.error(err);
     } else {
         console.log(`Server is running on port ${port}`);
     }
 });
+
+const io = new socketIo.Server(server, {
+    cors: {
+        origin: "http://localhost:3000",
+      // credentials:true
+      methods: ["GET", "POST"],
+    },
+  });
+  
+  io.on("connection", (socket) => {
+    // console.log(`user Connect: ${socket.id}`);
+    socket.on("disconnect", () => {
+      // console.log('disconnect socketid', socket.id)
+    });
+    socket.on("sendMessage", (data) => {
+      socket.broadcast.emit("receive_message", data);
+    });
+  });
