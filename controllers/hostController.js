@@ -15,6 +15,7 @@ module.exports={
                 //creating new rent car in db
                 const { id } = req.body;
                 console.log(id);
+                console.log(req.body.email)
                 let carNumber = req.body.carNumber.toUpperCase();
                 console.log(carNumber)
                 Object.assign(req.body, { owner: id, carNumber: carNumber });
