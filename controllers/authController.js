@@ -6,6 +6,7 @@ const crypto = require("crypto");
 
 module.exports={
     postLogin:async (req, res) => {
+        try{
     
         //validating the login details
         const { error } = authValidate(req.body);
@@ -39,11 +40,17 @@ module.exports={
                 const url = `${process.env.BASE_URL}users/${user.id}/verify/${token.token}`;
                 await sendEmail(user.email, "Verify Email", url);
             }
-            return res.status(400).json({ message: "An Email sent to your account please verify" });
+            return res.status(400).json({ message: "Email send for verification" });
         }
     
         //creating jwt token for authentication
         const authToken = user.generateAuthToken();
         res.status(200).json({ data: authToken,user:user, message: "logged in successfully" });
+    } catch (error) {
+        // Handle unexpected errors
+        console.error("Error:", error);
+        res.status(500).json({ message: "An error occurred" });
+    }
+    
     }
 }

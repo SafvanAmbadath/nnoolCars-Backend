@@ -2,7 +2,7 @@ const { userDb } = require("../models/userSchema");
 const rentCarDb = require("../models/rentCarSchema");
 const locationDb = require("../models/locationSchema");
 const bcrypt = require("bcrypt");
-const orderDb=require("../models/orderSchema")
+const orderDb = require("../models/orderSchema");
 // const jwt = require("jsonwebtoken");
 
 module.exports = {
@@ -35,8 +35,10 @@ module.exports = {
                 //if admin is not exists with the email
                 res.status(204).send({ message: "You are not an admin" });
             }
-        } catch (err) {
-            console.log(err.message);
+        } catch (error) {
+            // Handle unexpected errors
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
         }
     },
     getUsersList: async (req, res) => {
@@ -46,7 +48,10 @@ module.exports = {
 
             if (users) return res.status(201).json({ users });
             return res.json({});
-        } catch (e) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
     postBlockUser: async (req, res) => {
         try {
@@ -60,7 +65,10 @@ module.exports = {
                     console.log(err);
                     res.status(500).json();
                 });
-        } catch (error) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
     postUnBlockUser: async (req, res) => {
         try {
@@ -74,7 +82,10 @@ module.exports = {
                     console.log(err);
                     res.status(500).json();
                 });
-        } catch (error) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
     getPendingHostCars: async (req, res) => {
         try {
@@ -84,14 +95,20 @@ module.exports = {
                 res.status(200).json({ message: "Success", car });
             } else {
             }
-        } catch (e) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
     getHostCars: async (req, res) => {
         try {
             const car = await rentCarDb.find({ status: req.query.status });
 
             res.status(200).json({ message: "Success", car });
-        } catch (e) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
     getHostApprove: async (req, res) => {
         try {
@@ -105,7 +122,10 @@ module.exports = {
             );
 
             res.status(200).json({ message: "Rc approved" });
-        } catch (e) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
     getHostDeny: async (req, res) => {
         try {
@@ -119,7 +139,10 @@ module.exports = {
             );
 
             res.status(200).json({ message: "Rc Denied" });
-        } catch (e) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
 
     postLocation: async (req, res) => {
@@ -136,7 +159,10 @@ module.exports = {
                     res.status(200).json({ message: " New Location Created" });
                 });
             }
-        } catch (e) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
 
     getLocations: async (req, res) => {
@@ -148,7 +174,10 @@ module.exports = {
             const oldLocation = await locationDb.find();
 
             res.status(200).json({ hostcityAndStateCode, oldLocation });
-        } catch (e) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
 
     getDeleteLocation: async (req, res) => {
@@ -161,115 +190,121 @@ module.exports = {
                 .catch((er) => {
                     res.status(501).json({ message: "somthing wrong" });
                 });
-        } catch (e) {}
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
     },
-     getCompliteOrder :async (req, res) => {
+    getCompliteOrder: async (req, res) => {
         try {
             console.log("for orders");
-          const orders = await orderDb.find({});
-          console.log(orders);
-      
-          res.status(201).json({ orders });
-        } catch (e) {}
-      },
-       updatePayment :async (req, res) => {
+            const orders = await orderDb.find({});
+            console.log(orders);
+
+            res.status(201).json({ orders });
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
+    },
+    updatePayment: async (req, res) => {
         try {
-          const data = await orderDb.findOneAndUpdate(
-            { _id: req.body.orderId },
-            { orderStatus: "Paid" },
-            { new: true }
-          );
-      
-          res.status(201).json({ data });
-      
-          if (data) return res.status(201).json({ data });
-          return res.json({});
-        } catch (e) {}
-      },
-       getAcDetails : async (req, res) => {
+            const data = await orderDb.findOneAndUpdate({ _id: req.body.orderId }, { orderStatus: "Paid" }, { new: true });
+
+            res.status(201).json({ data });
+
+            if (data) return res.status(201).json({ data });
+            return res.json({});
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
+    },
+    getAcDetails: async (req, res) => {
         try {
             console.log(req.query.userId);
-          const acDetail = await rentCarDb.findOne({ _id: req.query.userId }).populate(
-            "owner"
-          );
-          console.log(acDetail);
-      
-          if (acDetail)
-            return res
-              .status(201)
-              .json({
-                account: acDetail.owner.bankAccount,
-                amount: req.query.amount,
-              });
-          return res.json({ msg: "Create your account" });
-        } catch (e) {
-            console.log(e);
+            const acDetail = await rentCarDb.findOne({ _id: req.query.userId }).populate("owner");
+            console.log(acDetail);
+
+            if (acDetail)
+                return res.status(201).json({
+                    account: acDetail.owner.bankAccount,
+                    amount: req.query.amount,
+                });
+            return res.json({ msg: "Create your account" });
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
         }
-      },
-      getOrderDetails : async (req, res) => {
+    },
+    getOrderDetails: async (req, res) => {
         try {
-          const data = await orderDb.find({});
-      
-          res.status(201).json(data);
+            const data = await orderDb.find({});
+
+            res.status(201).json(data);
         } catch (e) {}
-      },
-      getMonthName:function(monthNumber){
-        const months=[
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",]
-        if(monthNumber>=1 && monthNumber<=12){
-            return months[monthNumber-1]
-        }else{
-            return "Invalid Month Number"
-        }
-      },
-       getDashBoard :async function(req, res) {
+    },
+    getMonthName: function (monthNumber) {
         try {
-          const profit = await orderDb.aggregate([
-            {
-              $group: {
-                _id: { $dateToString: { format: "%m", date: "$createdAt" } },
-                profit_count: { $sum: 1 },
-              },
-            },
-            { $sort: { _id: 1 } },
-          ]);
-          console.log(profit);
-      
-          const result = profit.map((report) => {
-            const month = this.getMonthName(report._id);
-            report.month = month;
-            return report;
-          });
-          const pending = await orderDb.find({ orderStatus: "pending" }).count();
-          const complete = await orderDb.find({ orderStatus: "complete" }).count();
-          const cancel = await orderDb.find({ orderStatus: "cancel" }).count();
-          const completePayment = await orderDb
-            .find({ orderStatus: "complete Payment" })
-            .count();
-          console.log(pending);
-          let data = [];
-          data.push(pending);
-          data.push(complete);
-      
-          data.push(cancel);
-          data.push(completePayment);
-          console.log(data);
-      
-          res.status(200).json({ result, data });
-        } catch (err) {
-            console.log(err);
-          // res.status(500).json({ error:"internal server error" });
+            const months = [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+            ];
+            if (monthNumber >= 1 && monthNumber <= 12) {
+                return months[monthNumber - 1];
+            } else {
+                return "Invalid Month Number";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
         }
-}
+    },
+    getDashBoard: async function (req, res) {
+        try {
+            const profit = await orderDb.aggregate([
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%m", date: "$createdAt" } },
+                        profit_count: { $sum: 1 },
+                    },
+                },
+                { $sort: { _id: 1 } },
+            ]);
+            console.log(profit);
+
+            const result = profit.map((report) => {
+                const month = this.getMonthName(report._id);
+                report.month = month;
+                return report;
+            });
+            const pending = await orderDb.find({ orderStatus: "pending" }).count();
+            const complete = await orderDb.find({ orderStatus: "complete" }).count();
+            const cancel = await orderDb.find({ orderStatus: "cancel" }).count();
+            const completePayment = await orderDb.find({ orderStatus: "complete Payment" }).count();
+            console.log(pending);
+            let data = [];
+            data.push(pending);
+            data.push(complete);
+
+            data.push(cancel);
+            data.push(completePayment);
+            console.log(data);
+
+            res.status(200).json({ result, data });
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(500).json({ message: "An error occurred" });
+        }
+    },
 };
