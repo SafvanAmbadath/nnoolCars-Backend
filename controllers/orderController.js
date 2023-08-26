@@ -46,6 +46,7 @@ module.exports = {
     },
     orderDetails: async (req, res) => {
         try {
+            console.log("orders");
             const { userId } = req.query;
             console.log(userId);
             const orders = await orderDb.find({ userData: userId }).populate("carData");

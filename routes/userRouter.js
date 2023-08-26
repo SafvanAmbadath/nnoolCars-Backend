@@ -11,7 +11,7 @@ router.post("/toLogin", userCtrl.postToLogin);
 router.get("/:id/verify/:token", userCtrl.getVerifyUser);
 router.post("/googleAuthentication", userCtrl.postGoogleAuthentication);
 router.get("/checkprofile", verifyToken, userCtrl.checkprofile);
-router.post("/postProfile", verifyToken, userCtrl.postProfile);
+router.patch("/postProfile", verifyToken, userCtrl.postProfile);
 
 //locations
 router.get("/getareas", userCtrl.getAreas);
@@ -24,16 +24,16 @@ router.get("/getcar", userCtrl.getCarDetails);
 //host routes
 router.get("/checkAcc", hostCtrl.getCheckAccount);
 router.post("/rentCarData", hostCtrl.postRentCar);
-router.post("/postAccountDetails", verifyToken, hostCtrl.postBankAccount);
+router.patch("/postAccountDetails", verifyToken, hostCtrl.postBankAccount);
 router.get("/getAccount", verifyToken, hostCtrl.getAccount);
 router.get("/gethostList", verifyToken, hostCtrl.hostList);
 
 //order routes
 router.post("/createOrder", verifyToken, orderCtrl.postBookCar);
 router.get("/getOrderForUser", verifyToken, orderCtrl.orderDetails);
-router.post("/updateExpandDate", verifyToken, orderCtrl.expandDate);
-router.post("/cancelOrder", verifyToken, orderCtrl.cancelOrder);
-router.post("/setCompleteOrder", verifyToken, orderCtrl.completeOrder);
+router.patch("/updateExpandDate", verifyToken, orderCtrl.expandDate);
+router.patch("/cancelOrder", verifyToken, orderCtrl.cancelOrder);
+router.patch("/setCompleteOrder", verifyToken, orderCtrl.completeOrder);
 
 //chat routes
 router.post("/sendMessage", verifyToken, chatCtrl.addMesssage);
