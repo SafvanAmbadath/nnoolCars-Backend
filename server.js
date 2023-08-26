@@ -22,8 +22,8 @@ app.use(express.json());
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(
     cors({
-        // origin: "https://main.d270xvexgukj4w.amplifyapp.com",
-        origin: "http://localhost:3000",
+        origin: "https://main.d270xvexgukj4w.amplifyapp.com",
+        // origin: "http://localhost:3000",
         methods: ["GET", "POST"],
         credentials: true,
     })
@@ -49,8 +49,8 @@ const server=app.listen(port, (err) => {
 
 const io = new socketIo.Server(server, {
     cors: {
-        // origin: "https://main.d270xvexgukj4w.amplifyapp.com",
-        origin:"http://localhost:3000",
+        origin: "https://main.d270xvexgukj4w.amplifyapp.com",
+        // origin:"http://localhost:3000",
       // credentials:true
       methods: ["GET", "POST"],
     },
